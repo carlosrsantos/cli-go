@@ -34,6 +34,18 @@ func Gerar() *cli.App {
 			Flags:  flags,
 			Action: buscarServidores,
 		},
+		{
+			Name:   "address",
+			Usage:  "Busca o endereço do host na internet",
+			Flags:  flags,
+			Action: buscarEndereco,
+		},
+		{
+			Name:   "cname",
+			Usage:  "Busca o nome canonico do host na internet",
+			Flags:  flags,
+			Action: buscarNome,
+		},
 	}
 
 	return app
@@ -61,5 +73,31 @@ func buscarServidores(c *cli.Context) {
 
 	for _, servidor := range servidores {
 		fmt.Println(servidor.Host)
+	}
+}
+
+func buscarEndereco(c *cli.Context) {
+	host := c.String("host")
+
+	enderecos, erro := net.LookupAddr(host)
+	if erro != nil {
+		log.Fatal(erro)
+	}
+
+	for _, endereco := range enderecos {
+		fmt.Println(endereco)
+	}
+}
+
+func buscarNome(c *cli.Context) {
+	host := c.String("host")
+
+	names, erro := net.LookupCNAME(host)
+	if erro != nil {
+		log.Fatal(erro)
+	}
+
+	for _, name := range names {
+		fmt.Println(name)
 	}
 }
